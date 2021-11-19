@@ -1,0 +1,6 @@
+channel-artifacts/*
+crypto-material/*
+
+
+!channel-artifacts/.gitkeep
+!crypto-material/.gitkeep
