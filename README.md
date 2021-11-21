@@ -24,18 +24,18 @@
 - configtxgen
 	- Create genesis block for "channel1"
 		- ```configtxgen -profile OneOrgApplicationGenesis -outputBlock ./channel-artifacts/genesis.block -channelID channel1```
-	- channel transaction
-	- anchor peer transaction
+	<!-- - channel transaction
+	- anchor peer transaction -->
 - docker
 	- write docker-compose.yaml
 	- in root directory run
 		- ```docker-compose -f ./docker-compose.yaml up -d```
 		- check all containers
-			- ```docker pa -a```
+			- ```docker ps -a```
 		- stop services
 			- ```docker-compose -f ./docker-compose.yaml stop```
-		- Stop and remove containers, networks, images, and volumes
-			- ```docker-compose -f ./docker-compose.yaml down```
+		- Stop and remove containers, networks, images, and volumes (for destroy everything)
+			- ```docker-compose -f ./docker-compose.yaml down -v```
 - connect to cli container
 	- ```docker exec -it cli bash```
 
@@ -45,7 +45,7 @@
 
 		export OSN_TLS_CA_ROOT_CERT=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
 
-		export ADMIN_TLS_SIGN_CERT=./opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
+		export ADMIN_TLS_SIGN_CERT=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.crt
 
 		export ADMIN_TLS_PRIVATE_KEY=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/tls/server.key
 		```
@@ -142,3 +142,75 @@
 			```
 
 			```peer channel update -f channel-artifacts/config_update_in_envelope.pb -c channel1 -o "orderer.example.com:7050"  --ordererTLSHostnameOverride orderer.example.com --tls --cafile $ORDERER_CA```
+	
+	- Chaincode
+		- go to chaincode folder in cli file system
+		- put chaincode file there
+		- `go mod init github.com/chaincode` from chaincode directory itself
+			- it will create go.mod
+		- (https://golang.org/doc/tutorial/create-module)
+		- `go mod tidy`
+			- it will add and dependencies definde in chaincode file
+		- `GO111MODULE=on go mod vendor`
+			- it will install all dependencies and put them in vendor folder
+		
+			``````
+		- package and install chaincode
+
+			```
+			export CORE_PEER_LOCALMSPID="Org1MSP"
+			export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt
+			export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+			export CORE_PEER_ADDRESS=peer1.org1.example.com:7051
+
+			export CORE_PEER_LOCALMSPID="Org1MSP"
+			export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer2.org1.example.com/tls/ca.crt
+			export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+			export CORE_PEER_ADDRESS=peer2.org1.example.com:7061
+			```
+
+			```
+			# peer lifecycle chaincode package mycc.tar.gz -p . -n mycc --lang golang -v 1.0 -s -S
+			peer lifecycle chaincode package ./packages/simple_cc_v1_v1.tar.gz -p . --label simplecc_v1_v1
+
+			# peer lifecycle chaincode install mycc.tar.gz
+			peer lifecycle chaincode install ./packages/simple_cc_v1_v1.tar.gz
+
+
+			peer lifecycle chaincode queryinstalled
+			```
+
+		- approve chaincode and check commit readiness (admin of org)
+
+			```
+			export CORE_PEER_TLS_ENABLED=true
+			export CORE_PEER_LOCALMSPID="Org1MSP"
+			export CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt
+			export CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+			export CORE_PEER_ADDRESS=peer1.org1.example.com:7051
+
+			export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+			export CC_PACKAGE_ID=simplecc_v1_v1:802ae430bc3e78eaf96bdac4c895cb33a57c54dacbeb7392f2e7a3071e77b858
+
+			peer lifecycle chaincode approveformyorg -n simplecc -v 1 -C  channel1 --sequence 1 --init-required --package-id $CC_PACKAGE_ID --tls --cafile $ORDERER_CA
+
+			peer lifecycle chaincode checkcommitreadiness -n simplecc -v 1 -C  channel1 --sequence 1 --init-required
+
+			```
+		- commit and check commited
+
+			```
+			peer lifecycle chaincode commit -n simplecc -v 1 -C channel1 --sequence 1 --init-required --tls --cafile $ORDERER_CA
+
+			peer lifecycle chaincode querycommitted -n simplecc  -C channel1
+			```
+		- after commit
+			1. Init the chaincode
+				`peer chaincode invoke --isInit  -n simplecc -C channel1 -c '{"Args":["init","a","100","b","200"]}' --tls --cafile $ORDERER_CA`
+
+			2. Query the chaincode
+				`peer chaincode query -C channel1 -n simplecc  -c '{"Args":["query","a"]}'`
+
+			3. Invoke the chaincode
+				`peer chaincode invoke -C channel1 -n simplecc  -c '{"Args":["invoke","a","b","10"]}' --tls --cafile $ORDERER_CA`

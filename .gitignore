@@ -1,6 +1,6 @@
-channel-artifacts/*
-crypto-material/*
+chaincode/vendor/*
+# channel-artifacts/*
 
+# !channel-artifacts/.gitkeep
 
-!channel-artifacts/.gitkeep
-!crypto-material/.gitkeep
+!chaincode/vendor/.gitkeep
