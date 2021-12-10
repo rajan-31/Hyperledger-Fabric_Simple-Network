@@ -79,6 +79,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:7051
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:17051
+      # chaincode
+      # - CORE_VM_DOCKER_ATTACHSTDOUT=true  # chaincode logging
     volumes:
         - ${DOCKER_SOCK}:/host/var/run/docker.sock
         - ./crypto-material/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp:/etc/hyperledger/fabric/msp
@@ -118,6 +120,8 @@ services:
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer2.org1.example.com:7061
       - CORE_PEER_LOCALMSPID=Org1MSP
       - CORE_OPERATIONS_LISTENADDRESS=0.0.0.0:17061
+      # chaincode
+      # - CORE_VM_DOCKER_ATTACHSTDOUT=true  # chaincode logging
     volumes:
         - ${DOCKER_SOCK}:/host/var/run/docker.sock
         - ./crypto-material/peerOrganizations/org1.example.com/peers/peer2.org1.example.com/msp:/etc/hyperledger/fabric/msp

@@ -1,7 +1,37 @@
-# Start docker
-```sudo systemctl start docker```
+# Branches in this repo
 
-# Steps
+*Note: Branches with name like "v1", "v2", etc. are only for understanding that what is changed since last update. This means that latest "v" branch is same as "main".
+
+__main__
+	- main devlopment branch
+
+__v1__
+	- first network developed
+
+__v2__
+	- EnableNodeOUs: true
+		- setting this to true will allow us to define additional policies for the network members
+	- Chaincode operations - chaincode install dependencies, package, install, approve, commit, init, invoke
+
+__v3__
+	- Chaincode development scripts
+---
+
+# Helpful Commands
+
+- Start docker daemon
+
+	```sudo systemctl start docker```
+
+- docker ps, Print selected columns
+
+	```docker ps --format "table {{.ID}}\t{{.Command}}\t{{.Names}}"```
+
+# Future Goals
+
+	- use Hyperledger Explorer (similar to Etherscan)
+
+# Steps used
 
 - Installations
 	- Git
@@ -24,18 +54,20 @@
 - configtxgen
 	- Create genesis block for "channel1"
 		- ```configtxgen -profile OneOrgApplicationGenesis -outputBlock ./channel-artifacts/genesis.block -channelID channel1```
-	<!-- - channel transaction
-	- anchor peer transaction -->
+
 - docker
 	- write docker-compose.yaml
 	- in root directory run
 		- ```docker-compose -f ./docker-compose.yaml up -d```
 		- check all containers
 			- ```docker ps -a```
-		- stop services
+		- stop services (use after you stop development of the project)
 			- ```docker-compose -f ./docker-compose.yaml stop```
-		- Stop and remove containers, networks, images, and volumes (for destroy everything)
+		- start services (use when you again start development of the project)
+			- ```docker-compose -f ./docker-compose.yaml stop```
+		- Stop and remove containers, networks, images, and volumes (careful: for destroying everything)
 			- ```docker-compose -f ./docker-compose.yaml down -v```
+
 - connect to cli container
 	- ```docker exec -it cli bash```
 
@@ -146,15 +178,15 @@
 	- Chaincode
 		- go to chaincode folder in cli file system
 		- put chaincode file there
-		- `go mod init github.com/chaincode` from chaincode directory itself
+		- `go mod init github.com/chaincode` - from chaincode directory itself
 			- it will create go.mod
 		- (https://golang.org/doc/tutorial/create-module)
 		- `go mod tidy`
 			- it will add and dependencies definde in chaincode file
+
 		- `GO111MODULE=on go mod vendor`
 			- it will install all dependencies and put them in vendor folder
 		
-			``````
 		- package and install chaincode
 
 			```
@@ -206,11 +238,86 @@
 			peer lifecycle chaincode querycommitted -n simplecc  -C channel1
 			```
 		- after commit
-			1. Init the chaincode
-				`peer chaincode invoke --isInit  -n simplecc -C channel1 -c '{"Args":["init","a","100","b","200"]}' --tls --cafile $ORDERER_CA`
+			- FOR SHIM
+				1. Init the chaincode
+					`peer chaincode invoke --isInit  -n simplecc -C channel1 -c '{"Args":["init","a","100","b","200"]}' --tls --cafile $ORDERER_CA`
 
-			2. Query the chaincode
-				`peer chaincode query -C channel1 -n simplecc  -c '{"Args":["query","a"]}'`
+				2. Query the chaincode
+					`peer chaincode query -C channel1 -n simplecc  -c '{"Args":["query","a"]}'`
 
-			3. Invoke the chaincode
-				`peer chaincode invoke -C channel1 -n simplecc  -c '{"Args":["invoke","a","b","10"]}' --tls --cafile $ORDERER_CA`
+				3. Invoke the chaincode
+					`peer chaincode invoke -C channel1 -n simplecc  -c '{"Args":["invoke","a","b","10"]}' --tls --cafile $ORDERER_CA`
+			
+			- FOR TRANSACTION API
+				1. Init the chaincode
+					`peer chaincode invoke --isInit  -n simplecc -C channel1 -c '{"Args":["init","a","100","b","200"]}' --tls --cafile $ORDERER_CA`
+
+				2. Query the chaincode
+					`peer chaincode query -C channel1 -n simplecc  -c '{"Args":["query","a"]}'`
+
+	
+
+---
+
+*Note: Instructions given below are not proper, so don't try to follow unless you know what you are doing
+
+- Update same chaincode - for both org and channel (to upgrade i.e. to deploy new version skip this go to next point/step, upgrade chaincode)
+	- It will upgrade the binary, it will not create new container/image
+	- It is useful if you by mistakenly commited previous chaincode, and you want to change something
+	- stop chaincode container
+	- package chaincode
+	- install chaincode
+		- you will get new package id
+	- approve with same name and version as before
+	- commit with same name and version as before
+	- Query new (see that I changed function name query -> query_new)
+		`peer chaincode query -C channel1 -n simplecc  -c '{"Args":["query_new","a"]}'`
+
+- Upgrade chaincode
+	- It will create new container/image
+	- /var/hyperledger/production/lifecycle/chaincodes
+
+
+---
+
+CHAINCODE DEV scripts sequence
+
+- In cli bash
+	- 2. main
+	- to find seq no. ```peer lifecycle chaincode querycommitted -n simplecc  -C channel1```
+	- ```docker exec cli sh -c 'sh ./scripts/chaincode_dev-main.sh . <seq no.>'```
+
+- In "first" folder
+	- 1. clear_old_installations
+	- ```sh ./scripts/chaincode_dev-clear_old_installations-OR-combined.sh```
+
+__OR__
+
+- to combine both in one command
+- ```sh ./scripts/chaincode_dev-clear_old_installations-OR-combined.sh -```
+
+- it uses ```sh ./scripts/chaincode_dev-main.sh . $(($(peer lifecycle chaincode querycommitted -n simplecc  -C channel1 -O json | jq -r '.sequence') + 1))```
+
+---
+
+# MISC
+
+- Remove chaincode from peer (stop it from launching all installed chaincodes in containers)
+	- kill chaincode container
+	- `docker exec -it peer1.org1.example.com /bin/sh`
+	- remove chaincodes from `/var/hyperledger/production/lifecycle/chaincodes`
+	- restart peer
+
+---
+
+Solved Error by:
+
+- going through official documentation
+- research on internet regarding specific problem
+- going through source code of fabric
+- Lot of testing and modifications
+
+Other points:
+
+- Created StackOverflow questions and ans for future devs
+- opened issue on fabric github repo regarding error/bugs

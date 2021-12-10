@@ -1,6 +1,7 @@
-chaincode/vendor/*
 # channel-artifacts/*
 
 # !channel-artifacts/.gitkeep
 
-!chaincode/vendor/.gitkeep
+# .vscode
+
+application/*
