@@ -3,18 +3,27 @@
 *Note: Branches with name like "v1", "v2", etc. are only for understanding that what is changed since last update. This means that latest "v" branch is same as "main".
 
 __main__
+
 	- main devlopment branch
 
 __v1__
+
 	- first network developed
 
 __v2__
+
 	- EnableNodeOUs: true
 		- setting this to true will allow us to define additional policies for the network members
 	- Chaincode operations - chaincode install dependencies, package, install, approve, commit, init, invoke
 
 __v3__
-	- Chaincode development scripts
+
+	- Chaincode development 
+	
+__v4__
+
+	- Application to interact with chaincode, using fabric-node-sdk
+
 ---
 
 # Helpful Commands
@@ -255,7 +264,19 @@ __v3__
 				2. Query the chaincode
 					`peer chaincode query -C channel1 -n simplecc  -c '{"Args":["query","a"]}'`
 
-	
+	- Application (https://hyperledger-fabric.readthedocs.io/en/release-2.2/developapps/application.html)
+		1. Wallet (https://hyperledger-fabric.readthedocs.io/en/release-2.2/developapps/wallet.html#wallet)
+			- add a user identity we created previously (User1@org1.example.com) to wallet
+			- use addToWallet.js
+		
+		2. Gateway
+			- Write a connection profile file
+
+		3. Run app
+			- use transaction-CreateOrModify_Admin.js to execute a transaction
+				- response buffer will be empty, because in no return value for respective function in chaincode
+			- use transaction-CreateOrModify_Admin.js to execute a transaction
+				- response will be a buffer which we will convert to json, here we will get created user. Because respective function in chaincode has a return value
 
 ---
 

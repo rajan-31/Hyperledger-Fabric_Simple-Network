@@ -102,7 +102,7 @@ then
 
     peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"InitLedger","Args":[]}' --tls --cafile $ORDERER_CA
     # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"CreateOrModify_Admin","Args":["123456", "THN1", "123456", "123456789013"]}' --tls --cafile $ORDERER_CA
-    # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"CreateOrModify_User","Args":["admin_THN1", "123456", "123456789014", "123456", "User1"]}' --tls --cafile $ORDERER_CA
+    # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Create_User","Args":["admin_THN1", "123456", "123456789014", "123456", "User1"]}' --tls --cafile $ORDERER_CA
     # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"ChangeStatus_User","Args":["admin_THN1", "123456", "123456789014", 1]}' --tls --cafile $ORDERER_CA
 
 

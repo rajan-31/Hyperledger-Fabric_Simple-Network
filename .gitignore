@@ -4,4 +4,4 @@
 
 # .vscode
 
-application/*
+application/node_modules/*

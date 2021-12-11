@@ -1,0 +1,31 @@
+name: "simplecc.org1.profile"
+version: "1.1"
+
+channels:
+  channel1:
+    orderers:
+      - orderer.example.com
+    peers:
+      - peer1.org1.example.com
+
+organizations:
+  Org1MSP:
+    mspid: Org1MSP
+    peers:
+      - peer1.org1.example.com
+
+orderers:
+  orderer.example.com:
+    url: grpcs://localhost:7050
+    grpcOptions:
+      ssl-target-name-override: orderer.example.com
+    tlsCACerts:
+      path: ../crypto-material/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem
+
+peers:
+  peer1.org1.example.com:
+    url: grpcs://localhost:7051
+    grpcOptions:
+      ssl-target-name-override: peer1.org1.example.com
+    tlsCACerts:
+      path: ../crypto-material/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/msp/tlscacerts/tlsca.org1.example.com-cert.pem
