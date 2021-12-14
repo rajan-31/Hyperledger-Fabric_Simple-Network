@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <!-- icons -->
+    <link rel="icon" href="/public/img/landx16.png">
+    <link rel="apple-touch-icon" href="/public/img/landx64.png">
+
+    <link rel="stylesheet" href="/public/css/style.css">
+
+</head>
+<body>
+    <a href="/">Home</a>
+
+    <h3>Create User</h3>
+    <form id="create_user">
+        <input type="text" name="username" id="username" placeholder="username" value="admin_THN1">
+        <input type="password" name="password" id="password" placeholder="password" value="123456"><br>
+        <input type="text" name="uid" id="uid" placeholder="uid" value="123456789018">
+        <input type="text" name="new_pass" id="new_pass" placeholder="new_pass" value="123456">
+        <input type="text" name="new_name" id="new_name" placeholder="new_name" value="User3">
+        <br>
+        <button id="submit-create_user">Submit</button>
+    </form>
+    <div id="res-create_user" style="height: 50px; width: auto; border: 1px solid rgb(0, 128, 117);"></div>
+    
+    <h3>Get Value</h3>
+    <form id="getValue">
+        <input type="text" name="key" id="key" placeholder="key" value="user_123456789018">
+        <button id="submit-getValue">Submit</button>
+    </form>
+    <div id="res-getValue" style="height: 50px; width: auto; border: 1px solid rgb(0, 128, 117);"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/public/js/main.js"></script>
+</body>
+</html>
