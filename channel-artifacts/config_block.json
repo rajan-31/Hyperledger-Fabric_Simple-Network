@@ -622,15 +622,15 @@
 							"channel_id": "channel1",
 							"epoch": "0",
 							"extension": null,
-							"timestamp": "2021-11-20T14:31:02Z",
+							"timestamp": "2022-01-04T18:31:26Z",
 							"tls_cert_hash": null,
-							"tx_id": "ce2544e59099554b2fa435abc9e2144b88156d9d6145ea00b13621942c8e9c02",
+							"tx_id": "cedffccd87ef2236d9cbd84b6b338be512fd81051c9a27ee98a8639a2e1502b2",
 							"type": 1,
 							"version": 1
 						},
 						"signature_header": {
 							"creator": null,
-							"nonce": "/yZVr6VXUluGSx/eDeclnZ8l8MKEVol8"
+							"nonce": "DbWPMAhM2qsPmszo7P8xXUStHLn3jqYZ"
 						}
 					}
 				},
@@ -639,7 +639,7 @@
 		]
 	},
 	"header": {
-		"data_hash": "XWzB+KJgAdrb4yl03zi+BuddCgl+h7iCbbvjjvnnqzM=",
+		"data_hash": "h5vqQF9qH+Bm3chnbkf+stU9qSHnAcKFADC6Pal+eG0=",
 		"number": "0",
 		"previous_hash": null
 	},

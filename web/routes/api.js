@@ -27,18 +27,31 @@ router.post("/api/Create_User", async (req, res) => {
     }
 });
 
-router.post("/api/GetValue", async (req, res) => {
+// router.post("/api/GetValue", async (req, res) => {
+//     const key = req.body.key;
+
+//     try {
+//         const issueResponse = await contract.submitTransaction('GetValue', key);
+//         let json = JSON.parse(issueResponse.toString());
+
+//         res.status(200).json(json);
+//     } catch (error) {
+//         console.log(error);
+//         res.status(551).send(error.toString());
+//     }
+// });
+
+router.post("/api/GetValue", (req, res) => {
     const key = req.body.key;
 
-    try {
-        const issueResponse = await contract.submitTransaction('GetValue', key);
-        let json = JSON.parse(issueResponse.toString());
-
+    contract.submitTransaction('GetValue', key).then((payload)=>{
+        let json = JSON.parse(payload.toString());
+        console.log(json.password);
         res.status(200).json(json);
-    } catch (error) {
+    }).catch((error) => {
         console.log(error);
         res.status(551).send(error.toString());
-    }
+    });
 });
 
 module.exports = router;

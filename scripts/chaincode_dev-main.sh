@@ -34,7 +34,7 @@ export ORDERER_CA=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/orde
 
 echo -e "\n\n* Package"
 
-peer lifecycle chaincode package ./packages/simple_cc_v1_v1.tar.gz -p . --label simplecc_v1_v1
+peer lifecycle chaincode package ./packages/simple_cc_v1_v1.tar.gz -p ./my_chaincode --label simplecc_v1_v1
 
 
 
@@ -101,10 +101,28 @@ then
     echo -e "\n\n* Invoke to set super_admin"
 
     peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"InitLedger","Args":[]}' --tls --cafile $ORDERER_CA
-    # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"CreateOrModify_Admin","Args":["123456", "THN1", "123456", "123456789013"]}' --tls --cafile $ORDERER_CA
-    # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Create_User","Args":["admin_THN1", "123456", "123456789014", "123456", "User1"]}' --tls --cafile $ORDERER_CA
-    # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"ChangeStatus_User","Args":["admin_THN1", "123456", "123456789014", 1]}' --tls --cafile $ORDERER_CA
+    
+    #1 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"CreateOrModify_Admin","Args":["123456", "THN1", "123456", "123456789013", "Admin1"]}' --tls --cafile $ORDERER_CA
+    
+    #2 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Create_User","Args":["admin_THN1", "123456", "123456789014", "123456", "User1"]}' --tls --cafile $ORDERER_CA
 
+    #3 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Modify_User","Args":["admin_THN1", "123456", "123456789014", "User1"]}' --tls --cafile $ORDERER_CA
+    
+    #4 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Create_Estate","Args":["admin_THN1", "123456", "200", "123456789014", "Badlapur", "100", "2021-12-15T20:34:33+05:30", "0"]}' --tls --cafile $ORDERER_CA
+    
+    #5 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Modify_Estate","Args":["admin_THN1", "123456", "200", "", "101", "2021-12-15T20:34:33+05:30", "0"]}' --tls --cafile $ORDERER_CA
+    
+    #6 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Verify_Estate","Args":["admin_THN1", "123456", "200", "1"]}' --tls --cafile $ORDERER_CA    
+
+    #7 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"Verify_User","Args":["admin_THN1", "123456", "123456789014", "1"]}' --tls --cafile $ORDERER_CA
+    
+    #8 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"ChangeAvail_Estate","Args":["user_123456789014", "123456", "200", "true"]}' --tls --cafile $ORDERER_CA    
+
+    #8 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"RequestToBuy_Estate","Args":["user_123456789014", "123456", "200", "99999", "2021-12-16T20:34:33+05:30"]}' --tls --cafile $ORDERER_CA
+
+    #9 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"AcceptRequest_Estate","Args":["user_123456789014", "123456", "200", "123456789017", "2021-12-17T20:34:33+05:30"]}' --tls --cafile $ORDERER_CA
+
+    #9 peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"ApproveSell_Estate","Args":["admin_THN1", "123456", "200", "2021-12-18T20:34:33+05:30"]}' --tls --cafile $ORDERER_CA
 
     echo -e "\n\n* Query to get super_admin"
 
@@ -113,13 +131,13 @@ then
 
     echo -e "\n\n* Query to get all data"
 
-    peer chaincode query -C channel1 -n simplecc  -c '{"Args":["GetAll"]}'
+    peer chaincode query -C channel1 -n simplecc  -c '{"Args":["GetAll", "", ""]}'
 
 
 
     # echo -e "\n\n* Query to delete super_admin"
 
-    # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"DeleteSuperAdmin","Args":["admin_super"]}' --tls --cafile $ORDERER_CA
+    # peer chaincode invoke -n simplecc -C channel1 -c '{"Function":"DeleteValue","Args":["admin_"]}' --tls --cafile $ORDERER_CA
 
 elif [ "$TEMP_COUNT" -eq 0 ]
 then

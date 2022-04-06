@@ -30,12 +30,16 @@ __v5__
 
 - Simple web app to interact with chaincode.
 
+__v6__
+
+- Make chaincode modular, test performance using scripts
+
 ---
 
 # Helpful Commands
 
 - Start docker daemon
-
+orderer.example.com
     ```sudo systemctl start docker```
 
 - docker ps, Print selected columns
@@ -253,7 +257,7 @@ __v5__
 
             peer lifecycle chaincode querycommitted -n simplecc  -C channel1
             ```
-        - after commit
+        - after commit (change function name and args according to your chaincode)
             - FOR SHIM
                 1. Init the chaincode
                     `peer chaincode invoke --isInit  -n simplecc -C channel1 -c '{"Args":["init","a","100","b","200"]}' --tls --cafile $ORDERER_CA`
@@ -266,10 +270,10 @@ __v5__
             
             - FOR TRANSACTION API
                 1. Init the chaincode
-                    `peer chaincode invoke --isInit  -n simplecc -C channel1 -c '{"Args":["init","a","100","b","200"]}' --tls --cafile $ORDERER_CA`
+                    `peer chaincode invoke --isInit  -n simplecc -C channel1 -c '{"Function":"InitLedger","Args":[]}' --tls --cafile $ORDERER_CA`
 
                 2. Query the chaincode
-                    `peer chaincode query -C channel1 -n simplecc  -c '{"Args":["query","a"]}'`
+                    `peer chaincode query -C channel1 -n simplecc  -c '{"Function":"Query", "Args":["a"]}'`
 
     - Application (https://hyperledger-fabric.readthedocs.io/en/release-2.2/developapps/application.html)
         - fabric-node-sdk docs: https://hyperledger.github.io/fabric-sdk-node/release-2.2/index.html
